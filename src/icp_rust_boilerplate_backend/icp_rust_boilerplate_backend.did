@@ -1,0 +1,36 @@
+type Book = record {
+  id : nat64;
+  title : text;
+  borrowed_at : opt nat64;
+  borrowed_by : opt text;
+  borrowed : bool;
+  author : text;
+  published_year : nat32;
+};
+type BookPayload = record {
+  title : text;
+  author : text;
+  published_year : nat32;
+};
+type Error = variant {
+  BookNotBorrowed : record { msg : text };
+  BookAlreadyBorrowed : record { msg : text };
+  NotFound : record { msg : text };
+  UnauthorizedAccess : record { msg : text };
+  Validation : record { msg : text };
+};
+type Result = variant { Ok : opt Book; Err : Error };
+type Result_1 = variant { Ok : Book; Err : Error };
+service : {
+  add_book : (BookPayload) -> (Result);
+  borrow_book : (nat64, text) -> (Result_1);
+  get_book : (nat64) -> (Result_1) query;
+  get_return_history : (nat64) -> (vec nat64) query;
+  is_book_available : (nat64) -> (bool) query;
+  is_book_borrowed : (nat64) -> (bool) query;
+  list_books : () -> (vec Book) query;
+  record_return_history : (nat64) -> ();
+  return_book : (nat64) -> (Result_1);
+  update_book : (nat64, BookPayload) -> (Result_1);
+  view_book : (nat64) -> (Result_1) query;
+}
