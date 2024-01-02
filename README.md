@@ -1,75 +1,85 @@
-# Car Rental System Canister
+# icp_rust_message_board_contract
 
-This repository contains the source code for a car rental system canister on the Internet Computer (IC). The canister allows users to manage cars, customers, reservations, and generate reports for a car rental service. The system is designed to handle operations like adding cars, updating car information, making reservations, and generating reports.
+### Requirements
+* rustc 1.64 or higher
+```bash
+$ curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh
+$ source "$HOME/.cargo/env"
+```
+* rust wasm32-unknown-unknown target
+```bash
+$ rustup target add wasm32-unknown-unknown
+```
+* candid-extractor
+```bash
+$ cargo install candid-extractor
+```
+* install `dfx`
+```bash
+$ DFX_VERSION=0.15.0 sh -ci "$(curl -fsSL https://sdk.dfinity.org/install.sh)"
+$ echo 'export PATH="$PATH:$HOME/bin"' >> "$HOME/.bashrc"
+$ source ~/.bashrc
+$ dfx start --background
+```
 
-## Functionality
-
-The car rental system canister provides the following functionality:
-
-### Car Management
-
-- **Add Car (`add_car`):** Add a new car to the system.
-- **Update Car (`update_car`):** Update information about an existing car.
-- **Get Car (`get_car`):** Retrieve information about a specific car.
-- **Is Booked (`is_booked`):** Check if a car is currently booked.
-- **Delete Car (`delete_car`):** Delete a car from the system.
-
-### Customer Management
-
-- **Add Customer (`add_customer`):** Add a new customer to the system.
-- **Get Customer (`get_customer`):** Retrieve information about a specific customer.
-- **Delete Customer (`delete_customer`):** Delete a customer from the system.
-
-### Reservation Management
-
-- **Make Reservation (`make_reservation`):** Make a reservation for a car by a customer.
-- **Get Reservation (`get_reservation`):** Retrieve information about a reservation.
-- **Cancel Reservation (`cancel_reservation`):** Cancel a reservation for a car.
-
-### Reporting
-
-- **Generate Report (`generate_report`):** Generate a report with information about all cars in the system.
-
-## Deployment on Local Machine
-
-To deploy the canister locally, follow these steps:
-
-1. **Clone the Repository:**
-   ```bash
-   git clone https://github.com/sammy-dev/car-management-system-canister.git
-   cd car-management-system-canister
-   ```
-
-2. **Build the Canister:**
-   ```bash
-   dfx build
-   ```
-
-3. **Deploy the Canister:**
-   ```bash
-   dfx deploy
-   ```
-
-4. **Use the Generated Canister Identifier:**
-   The deployment process will provide you with a canister identifier. Use this identifier to interact with the deployed canister.
-
-For additional deployment options and configurations, refer to the [Internet Computer SDK documentation](https://sdk.dfinity.org/docs/quickstart/local-quickstart.html).
-
-## Testing
-
-To run tests, use the following command:
+If you want to start working on your project right away, you might want to try the following commands:
 
 ```bash
-cargo test
+$ cd icp_rust_boilerplate/
+$ dfx help
+$ dfx canister --help
 ```
 
-## Contributing
+## Update dependencies
 
-Feel free to contribute to the project by submitting issues or pull requests. Follow the standard GitHub flow for contributing.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+update the `dependencies` block in `/src/{canister_name}/Cargo.toml`:
+```
+[dependencies]
+candid = "0.9.9"
+ic-cdk = "0.11.1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1.0"
+ic-stable-structures = { git = "https://github.com/lwshang/stable-structures.git", branch = "lwshang/update_cdk"}
 ```
 
-You can save this content in a file with a `.md` extension, for example, `README.md`.
+## did autogenerate
+
+Add this script to the root directory of the project:
+```
+https://github.com/buildwithjuno/juno/blob/main/scripts/did.sh
+```
+
+Update line 16 with the name of your canister:
+```
+https://github.com/buildwithjuno/juno/blob/main/scripts/did.sh#L16
+```
+
+After this run this script to generate Candid.
+Important note!
+
+You should run this script each time you modify/add/remove exported functions of the canister.
+Otherwise, you'll have to modify the candid file manually.
+
+Also, you can add package json with this content:
+```
+{
+    "scripts": {
+        "generate": "./did.sh && dfx generate",
+        "gen-deploy": "./did.sh && dfx generate && dfx deploy -y"
+      }
+}
+```
+
+and use commands `npm run generate` to generate candid or `npm run gen-deploy` to generate candid and to deploy a canister.
+
+## Running the project locally
+
+If you want to test your project locally, you can use the following commands:
+
+```bash
+# Starts the replica, running in the background
+$ dfx start --background
+
+# Deploys your canisters to the replica and generates your candid interface
+$ dfx deploy
+```
